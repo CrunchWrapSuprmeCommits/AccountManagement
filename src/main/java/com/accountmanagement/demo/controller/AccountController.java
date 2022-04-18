@@ -3,6 +3,8 @@ package com.accountmanagement.demo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,18 +24,32 @@ public class AccountController {
 	AccountService accountService;
 	
 	@GetMapping("/getaccounts")
-	public List getAccounts() {
+	public List<Account> getAccounts() {
 		return accountService.getAllAccounts();
 	}
 	
 	@GetMapping("/getaccounts/{id}")
-	public Account getAccountByID(@PathVariable(value = "id") int id) {
-		return accountService.getAccountbyID(id);
+	public ResponseEntity<Account> getAccountByID(@PathVariable(value = "id") int id) {
+		
+		try {
+			Account account = accountService.getAccountbyID(id);
+			return new ResponseEntity<Account>(account,HttpStatus.OK);
+		}
+		catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	@GetMapping("/getaccounts/accountname")
-	public Account getAccountByName(@RequestParam(value = "name") String accountName) {
-		return accountService.getAccountbyName(accountName);
+	public ResponseEntity<Account> getAccountByName(@RequestParam(value = "name") String accountName) {
+		
+		try {
+			Account account = accountService.getAccountbyName(accountName);
+			return new ResponseEntity<Account>(account,HttpStatus.OK);
+		}
+		catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
 	@PostMapping("/addaccount")
@@ -41,9 +57,19 @@ public class AccountController {
 		return accountService.addAccount(account);
 	}
 	
-	@PutMapping("/updateaccount")
-	public Account updateAccount(@RequestBody Account account) {
-		return accountService.updateAccount(account);
+	@PutMapping("/updateaccount/{id}")
+	public ResponseEntity<Account> updateAccount(@PathVariable(value="id") int id, @RequestBody Account account) {
+		try {
+			Account existAccount = accountService.getAccountbyID(id);
+			existAccount.setAccountName(account.getAccountName());
+			
+			Account updatedAccount = accountService.updateAccount(existAccount);
+			return new ResponseEntity<Account>(updatedAccount, HttpStatus.OK);
+		}
+		catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		
 	}
 	
 	@DeleteMapping("/deleteaccount/{id}")

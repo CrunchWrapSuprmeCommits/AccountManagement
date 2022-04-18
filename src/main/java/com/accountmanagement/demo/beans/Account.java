@@ -10,10 +10,10 @@ import javax.persistence.Table;
 public class Account {
 
 	@Id
-	@Column(name="AccountID")
+	@Column(name="id")
 	int id;
 	
-	@Column(name="AccountName")
+	@Column(name="name")
 	String accountName;
 	
 	public Account() {
