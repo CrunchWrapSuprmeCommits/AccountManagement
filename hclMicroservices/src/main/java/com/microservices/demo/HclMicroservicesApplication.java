@@ -1,13 +1,13 @@
-package com.accountmanagement.demo;
+package com.microservices.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AccountManagementProjectApplication {
+public class HclMicroservicesApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AccountManagementProjectApplication.class, args);
+		SpringApplication.run(HclMicroservicesApplication.class, args);
 	}
 
 }

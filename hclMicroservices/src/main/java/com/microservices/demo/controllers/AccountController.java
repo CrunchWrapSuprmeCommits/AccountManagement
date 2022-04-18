@@ -1,4 +1,4 @@
-package com.accountmanagement.demo.controller;
+package com.microservices.demo.controllers;
 
 import java.util.List;
 
@@ -14,38 +14,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.accountmanagement.demo.beans.Account;
-import com.accountmanagement.demo.services.AccountService;
+import com.microservices.demo.beans.Account;
+import com.microservices.demo.services.AccountService;
 
 @RestController
 public class AccountController {
-
+	
 	@Autowired
 	AccountService accountService;
 	
 	@GetMapping("/getaccounts")
-	public List<Account> getAccounts() {
+	public List<Account> getAccount() {
 		return accountService.getAllAccounts();
 	}
 	
-	@GetMapping("/getaccounts/{id}")
-	public ResponseEntity<Account> getAccountByID(@PathVariable(value = "id") int id) {
+	@GetMapping("/getaccount/{id}")
+	public ResponseEntity<Account> getAccountById(@PathVariable(value="id") int accountId) {
 		
 		try {
-			Account account = accountService.getAccountbyID(id);
-			return new ResponseEntity<Account>(account,HttpStatus.OK);
+			
+			Account account = accountService.getAccountbyID(accountId);
+			return new ResponseEntity<Account>(account, HttpStatus.OK);
 		}
 		catch(Exception e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 	
-	@GetMapping("/getaccounts/accountname")
-	public ResponseEntity<Account> getAccountByName(@RequestParam(value = "name") String accountName) {
-		
+	@GetMapping("/getaccount/accountname")
+	public ResponseEntity<Account> getAccountByName(@RequestParam(value="name") String accountName) {
 		try {
+			
 			Account account = accountService.getAccountbyName(accountName);
-			return new ResponseEntity<Account>(account,HttpStatus.OK);
+			return new ResponseEntity<Account>(account, HttpStatus.OK);
 		}
 		catch(Exception e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -58,23 +59,24 @@ public class AccountController {
 	}
 	
 	@PutMapping("/updateaccount/{id}")
-	public ResponseEntity<Account> updateAccount(@PathVariable(value="id") int id, @RequestBody Account account) {
+	public ResponseEntity<Account> updateAccount(@PathVariable(value="id") int accountId, @RequestBody Account account) {
 		try {
-			Account existAccount = accountService.getAccountbyID(id);
-			existAccount.setAccountName(account.getAccountName());
+			Account existAccount = accountService.getAccountbyID(accountId);
 			
-			Account updatedAccount = accountService.updateAccount(existAccount);
-			return new ResponseEntity<Account>(updatedAccount, HttpStatus.OK);
+			existAccount.setAccountName(account.getAccountName());
+			existAccount.setAccountEmail(account.getAccountEmail());
+			
+			Account updated_account = accountService.updateAccount(existAccount);
+			return new ResponseEntity<Account>(updated_account, HttpStatus.OK);
 		}
 		catch(Exception e) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
-		
 	}
 	
 	@DeleteMapping("/deleteaccount/{id}")
-	public AddResponse deleteAccount(@PathVariable(value="id") int id) {
-		return accountService.deleteAccount(id);
+	public AddResponse deleteAccount(@PathVariable(value="id") int accountId) {
+		return accountService.deleteAccount(accountId);
 	}
-	
+
 }
